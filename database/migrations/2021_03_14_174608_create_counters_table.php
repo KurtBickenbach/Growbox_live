@@ -15,7 +15,18 @@ class CreateCountersTable extends Migration
     {
         Schema::create('counters', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('message');
+            //$table->string('topic');
+            //$table->smallInteger('message');
+            
+            $table->smallInteger('tmp');
+            $table->smallInteger('hum');
+            $table->boolean('lg');
+            $table->boolean('fhumU');
+            $table->smallInteger('humU');
+            $table->boolean('fheatU');
+            $table->smallInteger('heatU');
+            $table->smallInteger('exfan');
+            
             $table->timestamps();
         });
     }

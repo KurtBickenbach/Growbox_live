@@ -10,7 +10,7 @@ class Counter extends Model
     use HasFactory;
 
     protected $fillable = [
-        'message'
+        'message', 'topic', 'tmp', 'hum', 'lg', 'fhumU', 'humU', 'fheatU', 'heatU', 'exfan',
     ];
 
 }

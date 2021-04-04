@@ -9,11 +9,21 @@ use Illuminate\Support\Facades\Auth;
 use PhpMqtt\Client\Facades\MQTT;
 use PhpMqtt\Client\Contracts\MqttClient;
 use App\Models\Counter;
+use Log;
+
+//use PhpMqtt\Client\Examples\Shared\SimpleLogger;
+//use PhpMqtt\Client\Exceptions\MqttClientException;
+//use PhpMqtt\Client\MqttClient;
+//use Psr\Log\LogLevel;
+
+//$logger = new SimpleLogger(LogLevel::INFO);
 
 class Counters extends Component
 {   
 
-  public $counters, $config_id, $topic, $message;
+  public $counters, $config_id, $topic, $sub_message;
+
+  public $message = 88;
 
     public function getUserId(Request $request)
     {
@@ -38,54 +48,45 @@ class Counters extends Component
     {   
         /** @var \PhpMqtt\Client\Contracts\MqttClient $mqtt */
         $mqtt = MQTT::connection();
-        $mqtt->publish('mptt_test/humd', '666', 2, true);
+        $mqtt->publish('mptt_test/temp', '666', 2, true);
         //$mqtt->publish('somethingelse/other/topics', 'bar44', 1, true); // Retain the message
         $mqtt->loop(true, true);
     }
 
     public function mqttSubTest()
     {
-        /** @var \PhpMqtt\Client\Contracts\MqttClient $mqtt */
-        $mqtt = MQTT::connection();
-        pcntl_signal(SIGINT, function () use ($mqtt) {
-            $mqtt->interrupt();
-        });
-
         $mqtt = MQTT::connection();
         $mqtt->subscribe('mptt_test/temp', function (string $topic, string $message) {
-            echo sprintf('Received QoS level 1 message on topic [%s]: %s', $topic, $message);
-            $message = 'message';
-        }, 1);
-
-        Counter::updateOrCreate(['id' => $this->config_id],[
-            'message' => $this->message,
-        ]);    
-
-        $mqtt->interrupt();
+            Log::error($message); 
+            Counter::updateOrCreate(['id' => $this->config_id],[
+                'message' => $this->message]);      
+            },1);     
         $mqtt->loop(true);
-
-        $mqtt->disconnect();
     }
 
     public function mqttSubTestOpen()
     {
-
-
         $mqtt = MQTT::connection();
         $mqtt->subscribe('mptt_test/temp', function (string $topic, string $message) {
-            echo sprintf('Received QoS level 1 message on topic [%s]: %s', $topic, $message);
+            Log::error($message);
+           // echo sprintf('Received QoS level 1 message on topic [%s]: %s', $topic, $message);
+           // $mqtt->publish('php_test', $message, 2, true);
         }, 1);
-        //$mqtt->interrupt();
-        $mqtt->loop(true, true);
-
-        //$mqtt->disconnect();
+        $mqtt->loop(true);
     }
 
     public function stopMqttConnect()
     {
-        pcntl_signal(SIGINT, function () use ($mqtt) {
+        $mqtt = MQTT::connection();
             $mqtt->interrupt();
-        });
+        
+    }
+
+    public function store()
+    {
+        Counter::updateOrCreate(['id' => $this->config_id],[
+              'message' => $this->message]);
+    
     }
 
     public function render()

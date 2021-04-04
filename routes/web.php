@@ -5,6 +5,7 @@ use App\Http\Livewire\Blogs;
 use App\Http\Livewire\ManageDevices;
 use App\Http\Livewire\GrowConfigs;
 use App\Http\Livewire\Counter;
+use App\Http\Controllers\CounterNew;
 use App\Http\Livewire\Dashboard;
 
 /*
@@ -22,7 +23,10 @@ use App\Http\Livewire\Dashboard;
  //   return view('welcome');
 //});
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/welcome', App\Http\Livewire\Counters::class)->name('welcome');
+//Route::middleware(['auth:sanctum', 'verified'])->get('/welcome', App\Http\Livewire\Counters::class)->name('welcome');
+//Route::middleware(['auth:sanctum', 'verified'])->get('/welcomeNew', App\Http\Controllers\CounterNew::class)->name('welcomeNew');
+
+Route::get('/post', [CounterNew::class, 'mqttSubTestOpen']);
 
 //Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
  //  return view('dashboard');
